@@ -40,7 +40,8 @@ def on_quit(icon, item):
 def main():
     threading.Thread(target=read_qr_input, daemon=True).start()
 
-    icon = Icon("QR Sender")
+    icon = Icon("QR Sender", icon="tray.ico", menu=Menu(MenuItem("Quit", on_quit)))
+
     icon.icon = create_image()
     icon.menu = Menu(MenuItem("Quit", on_quit))
     icon.run()

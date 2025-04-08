@@ -54,8 +54,7 @@ HTML_TEMPLATE = """
         }
 
         button:hover {
-            background-color: #c0392b;
-            transform: scale(1.05);
+            background-color: #c0392b; 
         }
 
         ul {
@@ -69,14 +68,9 @@ HTML_TEMPLATE = """
             padding: 15px 20px;
             border-radius: 12px;
             position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.07);
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.07); 
         }
-
-        li:hover {
-            background-color: #f1f1f1;
-            transform: translateX(5px);
-        }
+ 
 
         .delete-btn {
             position: absolute;
