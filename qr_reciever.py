@@ -3,50 +3,147 @@ from flask import Flask, request, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# Store QR codes in memory
 qr_codes = []
 
-# HTML Template
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3">
     <title>QR Data Viewer</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
-        h2 { color: #333; }
-        button { margin-bottom: 15px; padding: 10px 20px; background: #d9534f; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        ul { list-style-type: none; padding: 0; }
-        li { background: #fff; margin: 5px 0; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; transition: background 0.3s; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #eef2f3, #8e9eab);
+            padding: 40px;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-shadow: 1px 1px 1px #ccc;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin: 10px 0;
+            padding: 15px 20px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        li:hover {
+            background-color: #f1f1f1;
+            transform: translateX(5px);
+        }
+
         .delete-btn {
             position: absolute;
-            top: 8px;
-            right: 10px;
-            display: none;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             background: none;
             border: none;
-            color: red;
-            font-size: 18px;
+            color: #e74c3c;
+            font-size: 20px;
+            display: none;
             cursor: pointer;
         }
+
         li:hover .delete-btn {
-            display: inline;
+            display: block;
+        }
+
+        .no-data {
+            font-style: italic;
+            color: #666;
+        }
+
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            button {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            li {
+                font-size: 14px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <h2>Received QR Codes</h2>
-    <button onclick="clearAll()">Clear All</button>
-    <ul id="qrList">
-        {% for code in qr_codes %}
-            <li data-index="{{ loop.index0 }}">
-                {{ code }}
-                <button class="delete-btn" onclick="deleteCode({{ loop.index0 }})">&times;</button>
-            </li>
-        {% else %}
-            <li>No QR codes received yet.</li>
-        {% endfor %}
-    </ul>
+    <div class="container fade-in">
+        <h2>Received QR Codes</h2>
+        <button onclick="clearAll()">Clear All</button>
+        <ul id="qrList">
+            {% for code in qr_codes %}
+                <li data-index="{{ loop.index0 }}">
+                    {{ code }}
+                    <button class="delete-btn" onclick="deleteCode({{ loop.index0 }})">&times;</button>
+                </li>
+            {% else %}
+                <li class="no-data">No QR codes received yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
     <script>
         function clearAll() {
